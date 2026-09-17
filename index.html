@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光影相册 · Photo Album</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>光影相册</h1>
+                    <span>Photo Album</span>
+                </div>
+            </div>
+
+            <button class="upload-btn" id="uploadBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>上传照片</span>
+            </button>
+
+            <nav class="nav">
+                <div class="nav-section">
+                    <div class="nav-title">浏览</div>
+                    <button class="nav-item active" data-filter="all">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>全部照片</span>
+                        <span class="count" id="countAll">0</span>
+                    </button>
+                    <button class="nav-item" data-filter="recent">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>最近添加</span>
+                    </button>
+                    <button class="nav-item" data-filter="favorites">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span>收藏</span>
+                        <span class="count" id="countFav">0</span>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">
+                        <span>标签</span>
+                        <button class="add-tag-btn" id="addTagBtn" title="新建标签">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="tag-list" id="tagList">
+                        <!-- Tags will be injected here -->
+                    </div>
+                </div>
+            </nav>
+
+            <div class="storage-info">
+                <div class="storage-label">
+                    <span>本地存储</span>
+                    <span id="storageUsed">0 MB</span>
+                </div>
+                <div class="storage-bar">
+                    <div class="storage-bar-fill" id="storageBar"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <header class="topbar">
+                <div class="search-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="搜索标签、描述或日期..." autocomplete="off">
+                    <button class="search-clear" id="searchClear" title="清空">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid" title="网格视图">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                        <button class="view-btn" data-view="masonry" title="瀑布流视图">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="8" height="14"></rect>
+                                <rect x="13" y="3" width="8" height="8"></rect>
+                                <rect x="3" y="19" width="8" height="2"></rect>
+                                <rect x="13" y="13" width="8" height="8"></rect>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="icon-btn" id="exportBtn" title="导出数据">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="active-filters" id="activeFilters"></div>
+
+                <div class="photo-grid" id="photoGrid">
+                    <!-- Photos will be injected here -->
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <h2>还没有照片</h2>
+                    <p>点击"上传照片"按钮，开始你的相册之旅</p>
+                    <button class="empty-upload-btn" id="emptyUploadBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>上传第一张照片</span>
+                    </button>
+                </div>
+
+                <div class="no-results" id="noResults">
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            <line x1="8" y1="11" x2="14" y2="11"></line>
+                        </svg>
+                    </div>
+                    <h2>未找到匹配的照片</h2>
+                    <p>试试调整搜索关键词或清除筛选条件</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>上传照片</h2>
+                <button class="modal-close" data-close="uploadModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-dropzone" id="dropzone">
+                    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                    <div class="dropzone-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p class="dropzone-title">拖拽照片到此处</p>
+                        <p class="dropzone-hint">或者 <span>点击选择文件</span></p>
+                        <p class="dropzone-formats">支持 JPG · PNG · GIF · WEBP</p>
+                    </div>
+                </div>
+                <div class="upload-preview-list" id="uploadPreviewList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-close="uploadModal">取消</button>
+                <button class="btn btn-primary" id="confirmUploadBtn" disabled>上传 <span id="uploadCount">0</span> 张照片</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>照片详情</h2>
+                <button class="modal-close" data-close="editModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body edit-modal-body">
+                <div class="edit-preview">
+                    <img id="editPreviewImg" alt="预览">
+                </div>
+                <div class="edit-form">
+                    <div class="form-group">
+                        <label>拍摄日期</label>
+                        <input type="date" id="editDate">
+                    </div>
+                    <div class="form-group">
+                        <label>描述说明</label>
+                        <textarea id="editDescription" rows="4" placeholder="写下这张照片背后的故事..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>标签</label>
+                        <div class="tag-input-wrapper">
+                            <div class="tag-chips" id="editTags"></div>
+                            <input type="text" id="editTagInput" placeholder="输入标签后按回车添加...">
+                        </div>
+                        <div class="tag-suggestions" id="tagSuggestions"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>文件名</label>
+                        <div class="filename-display" id="editFilename"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="deletePhotoBtn">删除</button>
+                <div class="footer-right">
+                    <button class="btn btn-secondary" data-close="editModal">取消</button>
+                    <button class="btn btn-primary" id="savePhotoBtn">保存修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <button class="lightbox-nav lightbox-prev" id="lightboxPrev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <div class="lightbox-content">
+            <img id="lightboxImg" alt="">
+            <div class="lightbox-info">
+                <div class="lightbox-tags" id="lightboxTags"></div>
+                <div class="lightbox-description" id="lightboxDescription"></div>
+                <div class="lightbox-meta" id="lightboxMeta"></div>
+            </div>
+        </div>
+        <button class="lightbox-nav lightbox-next" id="lightboxNext">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- New Tag Modal -->
+    <div class="modal" id="tagModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>新建标签</h2>
+                <button class="modal-close" data-close="tagModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>标签名称</label>
+                    <input type="text" id="newTagName" placeholder="例如：旅行、家人、风景" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>标签颜色</label>
+                    <div class="color-picker" id="colorPicker">
+                        <button type="button" class="color-option" style="--c:#6366f1" data-color="#6366f1"></button>
+                        <button type="button" class="color-option" style="--c:#ec4899" data-color="#ec4899"></button>
+                        <button type="button" class="color-option" style="--c:#f59e0b" data-color="#f59e0b"></button>
+                        <button type="button" class="color-option" style="--c:#10b981" data-color="#10b981"></button>
+                        <button type="button" class="color-option" style="--c:#06b6d4" data-color="#06b6d4"></button>
+                        <button type="button" class="color-option" style="--c:#8b5cf6" data-color="#8b5cf6"></button>
+                        <button type="button" class="color-option" style="--c:#ef4444" data-color="#ef4444"></button>
+                        <button type="button" class="color-option" style="--c:#84cc16" data-color="#84cc16"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-close="tagModal">取消</button>
+                <button class="btn btn-primary" id="confirmTagBtn">创建标签</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
