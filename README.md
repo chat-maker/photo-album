@@ -76,6 +76,7 @@ npx serve .
 - **描述内容** - 例如输入"日落"
 - **拍摄日期** - 例如输入"2024-08"
 - **文件名** - 例如输入"DSC"
+<img width="1794" height="1246" alt="image" src="https://github.com/user-attachments/assets/bbfa85c1-949e-46c8-87cf-1f06c04b4248" />
 
 ### 灯箱浏览
 - 单击任意照片进入全屏浏览模式
